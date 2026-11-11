@@ -8,10 +8,10 @@
 <style>
 :root{
   --paper:#EFE3C8; --ink:#3B2A1A; --ink2:#5a4630; --sea:#3E7C86; --brass:#B8893B; --hit:#B3261E; --green:#4F8A3C;
-  --b: min(42vw, calc(100vh - 190px));
+  --b: min(42vw, calc(var(--vh,100vh) - 190px));
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;overflow:hidden;background:#1d1610;color:var(--ink);
+html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:manipulation;background:#1d1610;color:var(--ink);
   font-family:"Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;user-select:none;-webkit-user-select:none}
 .screen{position:fixed;inset:0;display:none;background-size:cover;background-position:center}
 .screen.on{display:block}
@@ -59,7 +59,7 @@ h1,h2,h3{margin:0;font-weight:bold}
 .pl-meds img.boss{width:min(13vw,150px);height:min(13vw,150px);border-color:#8f1d16;box-shadow:0 0 0 2px #2a0806,0 0 26px 6px rgba(179,38,30,.75)}
 .pl-glow{border-radius:50%;background:radial-gradient(circle,rgba(255,210,120,.75),rgba(255,170,60,.25) 40%,transparent 70%);mix-blend-mode:screen}
 .pl-flash{border-radius:50%;background:radial-gradient(circle,rgba(255,250,220,1),rgba(255,190,80,.7) 30%,rgba(255,120,30,0) 70%);mix-blend-mode:screen;opacity:0}
-.pl-fx{background-repeat:no-repeat;mix-blend-mode:multiply}
+.pl-fx{background-repeat:no-repeat}
 .pl-unroll{position:absolute;top:0;bottom:0;width:4%;background:linear-gradient(90deg,rgba(60,40,20,0),rgba(60,40,20,.55) 45%,#e9dbbb 55%,#cdb88e 80%,rgba(60,40,20,.4));pointer-events:none;filter:drop-shadow(-6px 0 10px rgba(0,0,0,.45))}
 .pl-ship{will-change:transform}
 .pl-ship img{width:100%;display:block;filter:drop-shadow(0 6px 4px rgba(30,40,50,.25))}
@@ -219,7 +219,7 @@ h1,h2,h3{margin:0;font-weight:bold}
 .cell{position:absolute;width:10%;height:10%}
 .board.foe.active .cell.free{cursor:crosshair}
 .board.foe.active .cell.free:hover{background:rgba(179,38,30,.16);box-shadow:inset 0 0 0 2px rgba(179,38,30,.55)}
-.mark{position:absolute;inset:0;background-size:contain;background-repeat:no-repeat;background-position:center;mix-blend-mode:multiply;pointer-events:none}
+.mark{position:absolute;inset:0;background-size:contain;background-repeat:no-repeat;background-position:center;pointer-events:none}
 .mark.miss{background-image:url(assets/fx/mark_miss.png);-webkit-mask-image:radial-gradient(circle,#000 45%,transparent 70%);mask-image:radial-gradient(circle,#000 45%,transparent 70%);transform:scale(1.05);animation:pop .25s}
 .mark.hit{background-image:url(assets/fx/mark_hit.png);transform:scale(1.1);animation:pop .25s;z-index:4}
 .mark.dot{background-image:url(assets/fx/mark_blocked.png);animation:pop .25s}
@@ -228,7 +228,7 @@ h1,h2,h3{margin:0;font-weight:bold}
 .ship img{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;pointer-events:none}
 .ship.v{transform-origin:0 0;transform:rotate(90deg)}
 .ship.sunkfoe img{animation:fadeIn .6s both}
-.fx{position:absolute;pointer-events:none;z-index:5;background-repeat:no-repeat;mix-blend-mode:multiply}
+.fx{position:absolute;pointer-events:none;z-index:5;background-repeat:no-repeat}
 .preview{position:absolute;z-index:6;pointer-events:none;border-radius:4px}
 .preview.ok{background:rgba(79,138,60,.35);box-shadow:inset 0 0 0 2px rgba(79,138,60,.9)}
 .preview.bad{background:rgba(179,38,30,.3);box-shadow:inset 0 0 0 2px rgba(179,38,30,.9)}
@@ -382,9 +382,9 @@ h1,h2,h3{margin:0;font-weight:bold}
 @keyframes spot{to{background:rgba(179,38,30,.28)}}
 .plane{position:absolute;z-index:9;pointer-events:none;transform-origin:50% 50%}
 .plane img{width:100%;display:block;filter:drop-shadow(0 10px 6px rgba(0,0,0,.35))}
-.ovl{position:absolute;z-index:8;pointer-events:none;background-size:100% 100%;background-repeat:no-repeat;mix-blend-mode:multiply}
+.ovl{position:absolute;z-index:8;pointer-events:none;background-size:100% 100%;background-repeat:no-repeat}
 .subspr{position:absolute;z-index:6;pointer-events:none;background:url(assets/arsenal/submarine_top.png) center/contain no-repeat}
-.trail{position:absolute;z-index:6;pointer-events:none;background:url(assets/fx/torpedo_trail.png) right center/auto 100% no-repeat;mix-blend-mode:multiply;height:10%}
+.trail{position:absolute;z-index:6;pointer-events:none;background:url(assets/fx/torpedo_trail.png) right center/auto 100% no-repeat;height:10%}
 .trail.rev{transform:scaleX(-1)}
 .trail.v{width:10%;height:auto}
 /* топливо */
@@ -417,8 +417,8 @@ h1,h2,h3{margin:0;font-weight:bold}
 
 /* ---- бой ---- */
 #battle{--hh:clamp(60px,12vh,104px);--lbl:28px;--gap:3vw;--btn:clamp(36px,calc(var(--hh)*.5),50px);--avs:clamp(46px,calc(var(--hh) - 14px),88px);
-  --b:min(calc((100vw - 32px - var(--gap))/2.12), calc((100vh - var(--hh) - var(--lbl) - 26px)/1.06))}
-#battle.adv{--b:min(calc((100vw - 32px - var(--gap))/2.12), calc((100vh - var(--hh) - var(--lbl) - 80px)/1.06))}
+  --b:min(calc((100vw - 32px - var(--gap))/2.12), calc((var(--vh,100vh) - var(--hh) - var(--lbl) - 26px)/1.06))}
+#battle.adv{--b:min(calc((100vw - 32px - var(--gap))/2.12), calc((var(--vh,100vh) - var(--hh) - var(--lbl) - 80px)/1.06))}
 #battle .bfr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 12px}
 #battle .top{position:relative;width:calc(2.12*var(--b) + var(--gap));min-width:min(100%,560px);max-width:calc(100vw - 16px);height:var(--hh);flex:none;
   display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;column-gap:12px;container-type:inline-size}
@@ -447,10 +447,10 @@ h1,h2,h3{margin:0;font-weight:bold}
 .arsbar{min-height:50px;align-items:center}
 
 /* ---- расстановка ---- */
-#setup{--side:clamp(280px,30vw,420px);--b:min(calc((100vh - 36px)/1.06), calc((100vw - var(--side) - 3vw - 40px)/1.06))}
+#setup{--side:clamp(280px,30vw,420px);--b:min(calc((var(--vh,100vh) - 36px)/1.06), calc((100vw - var(--side) - 3vw - 40px)/1.06))}
 #setup.p2{--side:clamp(330px,38vw,540px)}
 #setup .wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:3vw;padding:12px 2vw;overflow-y:auto}
-.side{container-type:inline-size;display:flex;flex-direction:column;gap:10px;width:var(--side);max-height:calc(100vh - 24px);overflow-y:auto;padding:2px 4px 2px 2px}
+.side{container-type:inline-size;display:flex;flex-direction:column;gap:10px;width:var(--side);max-height:calc(var(--vh,100vh) - 24px);overflow-y:auto;padding:2px 4px 2px 2px}
 #setup .side.ars{display:none}
 .shop{grid-template-columns:repeat(2,minmax(0,1fr))}.item{min-width:0}.item .nm{overflow-wrap:anywhere}
 @container (max-width:430px){ .shop{grid-template-columns:1fr} }
@@ -462,8 +462,8 @@ h1,h2,h3{margin:0;font-weight:bold}
 #menu .wrap>:first-child{margin-top:auto}#menu .wrap>:last-child{margin-bottom:auto}
 .title .logo{width:min(44vw,48vh,560px)}
 @media (max-height:520px) and (min-aspect-ratio:1/1){
-  #battle{--hh:54px;--lbl:22px;--btn:36px;--avs:46px;--b:min(calc((100vw - 32px - var(--gap))/2.12), calc((100vh - var(--hh) - var(--lbl) - 18px)/1.06))}
-  #battle.adv{--b:min(calc((100vw - 32px - var(--gap))/2.12), calc((100vh - var(--hh) - var(--lbl) - 64px)/1.06))}
+  #battle{--hh:54px;--lbl:22px;--btn:36px;--avs:46px;--b:min(calc((100vw - 32px - var(--gap))/2.12), calc((var(--vh,100vh) - var(--hh) - var(--lbl) - 18px)/1.06))}
+  #battle.adv{--b:min(calc((100vw - 32px - var(--gap))/2.12), calc((var(--vh,100vh) - var(--hh) - var(--lbl) - 64px)/1.06))}
   .arsbar{min-height:42px}.wbtn{width:40px;height:40px}
 }
 @media (max-height:620px) and (min-aspect-ratio:1/1){
@@ -498,8 +498,8 @@ h1,h2,h3{margin:0;font-weight:bold}
 /* ---- телефоны и планшеты в портрете ---- */
 @media (max-aspect-ratio: 1/1){
   #battle{--hh:64px;--lbl:24px;--btn:38px;--avs:52px;
-    --b:min(calc((100vw - 20px)/1.06), calc((100vh - var(--hh) - 2*var(--lbl) - 30px)/2.12))}
-  #battle.adv{--b:min(calc((100vw - 20px)/1.06), calc((100vh - var(--hh) - 2*var(--lbl) - 84px)/2.12))}
+    --b:min(calc((100vw - 20px)/1.06), calc((var(--vh,100vh) - var(--hh) - 2*var(--lbl) - 30px)/2.12))}
+  #battle.adv{--b:min(calc((100vw - 20px)/1.06), calc((var(--vh,100vh) - var(--hh) - 2*var(--lbl) - 84px)/2.12))}
   #battle .bfr{justify-content:flex-start;padding:6px 8px;gap:2px}
   #battle .top{width:min(calc(100vw - 16px),640px);min-width:0;column-gap:8px}
   #battle .boards{flex-direction:column;align-items:center;gap:2px}
@@ -538,6 +538,47 @@ body:has(.autoskip.on) .toast{bottom:calc(max(10px,env(safe-area-inset-bottom)) 
 .ffveil>div{display:flex;align-items:center;gap:12px;padding:14px 26px;border-radius:14px;background:linear-gradient(#f6e7c4,#e4cf9f);border:2px solid #6b4a18;
   box-shadow:0 6px 20px rgba(0,0,0,.45);font-size:19px;color:#3d2a10}
 .ffveil svg{width:30px;height:30px;animation:helmSpin 1s linear infinite}
+/* ===== правки после теста на телефоне ===== */
+/* шапка боя: плашка хода рядом с игроком, справа капитан и кнопки */
+#battle .top{grid-template-columns:auto auto minmax(0,1fr)!important}
+#battle .top .turn{justify-self:start!important;max-width:100%}
+#battle .top .topright{grid-column:3;justify-self:end}
+.turn .ts{display:none}
+@container (max-width:560px){ .turn .tl{display:none} .turn .ts{display:inline} .turn{white-space:nowrap!important;font-size:14px!important;padding:6px 10px!important} }
+/* реплика капитана — слева от портрета, на уровне шапки, не заходит на поле */
+.bubble{width:max-content;top:50%;right:calc(100% + 12px);transform:translateY(-50%) scale(.6);transform-origin:100% 50%;z-index:40;padding:4px 12px 4px 4px;max-height:calc(var(--hh) - 4px)}
+.bubble.on{transform:translateY(-50%) scale(1)}
+.bubble::before{right:-9px;top:50%;margin-top:-8px;border:8px solid transparent;border-right:0;border-left:9px solid #8a6a2e}
+.bubble img{width:calc(var(--avs)*.78);height:calc(var(--avs)*.86)}
+.bubble span{font-size:clamp(13px,1.3vw,16px);max-width:min(240px,26vw);line-height:1.2}
+/* кнопка подсказок */
+.iconbtn.hintb{width:var(--btn);height:var(--btn);flex:none;background:radial-gradient(circle at 40% 35%,#fbf3df,#e2c98f)!important}
+.iconbtn.hintb svg{width:70%;height:70%}
+.iconbtn.hintb.off{opacity:1}.iconbtn.hintb.off svg path:not(.slash){opacity:.45}
+.iconbtn.autob{width:var(--btn)!important;height:var(--btn)!important}
+/* свой флот в подписи */
+#myFleetPips .pip{background:#3d6e78}
+/* стрелки в стиле игры */
+.avarr{display:inline-grid;place-items:center;padding:0}
+.avarr svg{width:58%;height:58%;display:block}
+.opp .arrows .avarr{width:40px;height:40px}
+.stkpanel>button.avarr{width:34px;height:34px}
+.mlink{display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.mlink span[data-i18n]{text-decoration:underline}
+.mlink .ic svg{width:18px;height:18px;display:block}
+.adic{display:inline-block;width:1.15em;height:1.15em;vertical-align:-.2em;margin-right:.35em}.adic svg{width:100%;height:100%;display:block}
+@media (max-aspect-ratio: 1/1){
+  #battle{--btn:34px;--avs:48px}
+  #battle .top{column-gap:6px}
+  .topright{gap:4px!important}
+  .bubble{right:calc(100% + 6px);max-width:calc(100vw - 120px)}
+  .bubble span{font-size:13px;max-width:none}
+  .bubble img{width:40px;height:44px}
+  #leaders .card{height:min(94%,860px);padding:16% 5% 6%}
+  #leaders .xbtn.left{top:3.5%;left:6%;width:40px;height:40px}
+  #leaders h2{margin-top:-6%}
+}
+@media (max-width:380px) and (max-aspect-ratio:1/1){ #battle{--btn:31px;--avs:44px} }
 </style>
 </head>
 <body>
@@ -615,7 +656,7 @@ body:has(.autoskip.on) .toast{bottom:calc(max(10px,env(safe-area-inset-bottom)) 
         <div class="lvl" id="mCapHint"></div>
         <div class="capdots" id="capDots"></div>
       </div>
-      <div class="arrows"><button id="capPrev">◀</button><button id="capNext">▶</button></div>
+      <div class="arrows"><button class="avarr" id="capPrev" data-icon="chevL"></button><button class="avarr" id="capNext" data-icon="chevR"></button></div>
     </div>
     <div class="menurow mplay"><button class="btn" id="playBtn" data-i18n="play"></button></div>
     <div class="menurow mbtns">
@@ -623,7 +664,7 @@ body:has(.autoskip.on) .toast{bottom:calc(max(10px,env(safe-area-inset-bottom)) 
       <button class="btn small" id="dailyBtn"><span data-icon="gift"></span><span data-i18n="daily"></span><i class="dot-badge" id="dailyDot"></i></button>
     </div>
     <div class="stats" id="mStats"></div>
-    <button class="mlink" id="prologueBtn" data-i18n="plReplay"></button>
+    <button class="mlink" id="prologueBtn"><span class="ic" data-icon="play"></span><span data-i18n="plReplay"></span></button>
   </div>
 </div>
 
@@ -677,18 +718,19 @@ body:has(.autoskip.on) .toast{bottom:calc(max(10px,env(safe-area-inset-bottom)) 
         <div class="bubble" id="bubble"><img id="bubbleImg" alt=""><span id="bubbleTxt"></span></div>
       </div>
       <button class="iconbtn autob" id="autoBattle" data-i18n-title="autoBattle" data-icon="helm"></button>
+      <button class="iconbtn hintb" id="hintsBtn" data-i18n-title="hintsT" data-icon="hint"></button>
       <button class="iconbtn pic" id="musicBtn2" data-i18n-title="music" data-icon="music"></button>
       <button class="iconbtn pic" id="surrender" data-i18n-title="surrender" data-icon="flag"></button>
     </div>
   </div>
   <div class="boards">
-    <div class="bcol"><div class="lbl"><span data-i18n="myFleet"></span></div><div class="boardwrap" id="meWrap"></div></div>
+    <div class="bcol"><div class="lbl"><span data-i18n="myFleet"></span><div class="fleet" id="myFleetPips"></div></div><div class="boardwrap" id="meWrap"></div></div>
     <div class="bcol"><div class="lbl"><span data-i18n="foeFleet"></span><div class="fleet" id="fleet"></div></div><div class="boardwrap" id="foeWrap"></div><div class="arsbar" id="arsBar"></div></div>
   </div>
   </div>
   <button class="btn autoskip" id="autoSkip"><span data-icon="helm"></span><span data-i18n="autoSkip"></span></button>
   <div class="ffveil" id="ffVeil"><div><span data-icon="helm"></span><b data-i18n="autoSkipping"></b></div></div>
-  <div class="stkpanel" id="stkPanel"><button id="stkPrev">◀</button><div id="stkRow"></div><button id="stkNext">▶</button></div>
+  <div class="stkpanel" id="stkPanel"><button class="avarr" id="stkPrev" data-icon="chevL"></button><div id="stkRow"></div><button class="avarr" id="stkNext" data-icon="chevR"></button></div>
   <div class="mystk" id="myStk"><img alt=""></div>
 </div>
 
@@ -748,7 +790,7 @@ body:has(.autoskip.on) .toast{bottom:calc(max(10px,env(safe-area-inset-bottom)) 
   <div class="avnow"><span class="av huge" id="avNow"></span><b id="avName"></b></div>
   <p data-i18n="avHelp"></p>
   <div class="avbox"><div class="avgrid" id="avGrid"></div>
-    <div class="avnav"><button class="avarr" id="avUp" data-i18n-title="avUp">▲</button><button class="avarr" id="avDown" data-i18n-title="avDown">▼</button></div></div>
+    <div class="avnav"><button class="avarr" id="avUp" data-i18n-title="avUp" data-icon="chevU"></button><button class="avarr" id="avDown" data-i18n-title="avDown" data-icon="chevD"></button></div></div>
   <div class="menurow"><button class="btn small" id="avDone" data-i18n="avDone"></button></div>
   <div class="err" id="avErr"></div>
 </div></div>
@@ -833,7 +875,7 @@ const I18N = {
   oppLvl:l=>`Соперник · уровень ${l} из 8`, hintRec:'Подобран по вашему званию', hintHard:'Сильнее, чем обычно для вашего звания', hintEasy:'Слабее, чем обычно для вашего звания',
   stats:s=>`Боёв: ${s.battles} · Побед: ${s.wins} · Поражений: ${s.losses} · Побед всухую: ${s.flawless}`,
   cantRotate:'Здесь не повернуть — мешают другие корабли или край поля',
-  capLvl:(l,t)=>`Уровень ${l} · ${t}`, turnMe:'Ваш ход — стреляйте!', turnFoe:'Ход соперника…',
+  capLvl:(l,t)=>`Уровень ${l} · ${t}`, turnMe:'Ваш ход — стреляйте!', turnFoe:'Ход соперника…', turnMeS:'Ваш ход!', turnFoeS:'Ход врага…', hintsT:'Подсказки', hintsOn:'Подсказки в бою включены', hintsOff:'Подсказки в бою выключены', 
   foeSunk:sh=>`${sh[0].toUpperCase()+sh.slice(1)} противника потоплен!`, mySunk:sh=>`Ваш ${sh} потоплен`,
   win:'ПОБЕДА!', lose:'ПОРАЖЕНИЕ', flawless:'Победа всухую — ни одного попадания по вашему флоту!',
   survived:n=>`Уцелело ваших кораблей: ${n} из 10`, stronger:(c,f)=>`${c} ${f?'оказалась':'оказался'} сильнее. Не сдавайтесь, капитан!`,
@@ -857,7 +899,7 @@ const I18N = {
   autoLimit:(n,w)=>`Автобой отдыхает: уже ${n} победы автобоем за последние ${w} боёв. Сыграйте сами — и он снова будет доступен`, autoTag:'автобой',
   pc1:'Туман пришёл с севера — а с ним флот Адмирала Тумана.', pc2:'Восемь капитанов служат ему. Ни один корабль не прошёл мимо.',
   pc3:'Но у старого лоцмана осталась карта, что видит сквозь туман.', pc4:'Лоция. Теперь она твоя, капитан.', pc5:'Поднять якоря!', pc6:'Найди. Прицелься. Потопи.',
-  plStart:'нажмите, чтобы начать', plSkip:'нажмите, чтобы пропустить', plSound:'нажмите, чтобы включить звук', plReplay:'▶ Смотреть пролог',
+  plStart:'нажмите, чтобы начать', plSkip:'нажмите, чтобы пропустить', plSound:'нажмите, чтобы включить звук', plReplay:'Смотреть пролог',
   adEnergy:n=>`Посмотреть ролик: +${n} энергии`, adXp:n=>`Удвоить опыт за ролик: ещё +${n}`, xpDoubled:n=>`Опыт удвоен: ещё +${n}!`, adNoRewardXp:'Ролик не досмотрен — опыт не удвоен', adNoReward:'Ролик не досмотрен — энергия не начислена',
   fleetLeft:n=>`Осталось кораблей противника: ${n}`, avUp:'Выше', avDown:'Ниже',
   stkTitle:'Стикеры', enShop:'Энергия', enBought:n=>`+${n} энергии!`, enBuyFail:'Покупка не прошла. Попробуйте ещё раз',
@@ -924,7 +966,7 @@ const I18N = {
   oppLvl:l=>`Opponent · level ${l} of 8`, hintRec:'Matched to your rank', hintHard:'Tougher than usual for your rank', hintEasy:'Easier than usual for your rank',
   stats:s=>`Battles: ${s.battles} · Wins: ${s.wins} · Losses: ${s.losses} · Flawless wins: ${s.flawless}`,
   cantRotate:"Can't rotate here — blocked by other ships or the edge",
-  capLvl:(l,t)=>`Level ${l} · ${t}`, turnMe:'Your turn — fire!', turnFoe:'Enemy is aiming…',
+  capLvl:(l,t)=>`Level ${l} · ${t}`, turnMe:'Your turn — fire!', turnFoe:'Enemy is aiming…', turnMeS:'Your turn!', turnFoeS:'Enemy turn…', hintsT:'Hints', hintsOn:'Battle hints on', hintsOff:'Battle hints off', 
   foeSunk:sh=>`Enemy ${sh} sunk!`, mySunk:sh=>`Your ${sh} has been sunk`,
   win:'VICTORY!', lose:'DEFEAT', flawless:'Flawless victory — not a single hit on your fleet!',
   survived:n=>`Ships still afloat: ${n} of 10`, stronger:(c)=>`${c} won this time. Don't give up, captain!`,
@@ -948,7 +990,7 @@ const I18N = {
   autoLimit:(n,w)=>`Auto battle is resting: ${n} auto wins in your last ${w} battles. Play one yourself and it will be back`, autoTag:'auto battle',
   pc1:'The fog came from the north — and with it, the fleet of the Admiral of the Fog.', pc2:'Eight captains serve him. Not a single ship has slipped past.',
   pc3:'But an old sea pilot kept a chart that sees through the fog.', pc4:'The Locia. Now it is yours, captain.', pc5:'Weigh anchor!', pc6:'Find. Aim. Sink.',
-  plStart:'tap to begin', plSkip:'tap to skip', plSound:'tap to turn the sound on', plReplay:'▶ Watch the prologue',
+  plStart:'tap to begin', plSkip:'tap to skip', plSound:'tap to turn the sound on', plReplay:'Watch the prologue',
   adEnergy:n=>`Watch a video: +${n} energy`, adXp:n=>`Double XP with a video: +${n} more`, xpDoubled:n=>`XP doubled: +${n} more!`, adNoRewardXp:'The video was not watched to the end — XP not doubled', adNoReward:'The video was not watched to the end — no energy this time',
   fleetLeft:n=>`Enemy ships left: ${n}`, avUp:'Up', avDown:'Down',
   stkTitle:'Stickers', enShop:'Energy', enBought:n=>`+${n} energy!`, enBuyFail:'The purchase did not go through. Please try again',
@@ -1229,6 +1271,7 @@ function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.t
   else if(id==='setup') Music.play('setup');
   else if(id==='battle') Music.play(G && G.lvl>=7 ? 'boss' : 'battle');
 }
+function hint(t){ if(save.hints===false) return; toast(t); }             // боевые подсказки (отключаются кнопкой в бою)
 let toastT; function toast(t){ if(isFF()) return; const el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('on'),1800); }
 
 /* иконки: сгенерированные PNG (assets/ui/icons) + SVG для мелочей */
@@ -1244,6 +1287,12 @@ const ICONS={
   back:`<img src="${IC}back.png" alt="">`,
   close:`<img src="${IC}close.png" alt="">`,
   helm:`<svg viewBox="0 0 48 48" fill="none" stroke="#6b4a1a" stroke-width="3" stroke-linecap="round"><circle cx="24" cy="24" r="13"/><circle cx="24" cy="24" r="4.5" fill="#b8893b"/>${[0,45,90,135,180,225,270,315].map(a=>{const r=a*Math.PI/180,c=Math.cos(r),s=Math.sin(r);return `<path d="M${(24+5*c).toFixed(1)} ${(24+5*s).toFixed(1)}L${(24+21*c).toFixed(1)} ${(24+21*s).toFixed(1)}"/><circle cx="${(24+21*c).toFixed(1)}" cy="${(24+21*s).toFixed(1)}" r="2.6" fill="#6b4a1a" stroke="none"/>`;}).join('')}</svg>`,
+  hint:`<svg viewBox="0 0 48 48" fill="none" stroke="#6b4a1a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11h30a3 3 0 0 1 3 3v15a3 3 0 0 1-3 3H22l-8 7v-7H9a3 3 0 0 1-3-3V14a3 3 0 0 1 3-3z" fill="#f3e2b8"/><path d="M14 19h20M14 25h13"/><path class="slash" d="M8 41 40 7" stroke="#b3261e" stroke-width="4"/></svg>`,
+  chevL:`<svg viewBox="0 0 24 24" fill="none" stroke="#6b4a1a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg>`,
+  chevR:`<svg viewBox="0 0 24 24" fill="none" stroke="#6b4a1a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>`,
+  chevU:`<svg viewBox="0 0 24 24" fill="none" stroke="#6b4a1a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15l7-7 7 7"/></svg>`,
+  chevD:`<svg viewBox="0 0 24 24" fill="none" stroke="#6b4a1a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9l7 7 7-7"/></svg>`,
+  play:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#b8893b" stroke="#6b4a1a" stroke-width="1.5"/><path d="M10 7.8v8.4l6.6-4.2z" fill="#fff8e6"/></svg>`,
   lockmini:`<svg viewBox="0 0 24 24" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2" fill="${INK}" stroke="none"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`,
   bolt:`<svg viewBox="0 0 24 24"><path d="M13.5 2 4 14h6.5L9 22l11-13h-7z" fill="#3d7fb8" stroke="#1f4a70" stroke-width="1.2" stroke-linejoin="round"/></svg>`,
   gift:`<svg viewBox="0 0 24 24" fill="none" stroke="${INK}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="12" rx="1.5" fill="#c9a25a"/><path d="M3 13h18M12 9v12"/><path d="M12 9c-2-4-6-4-6-1.5S10 9 12 9c2 0 6 .5 6-1.5S14 5 12 9z"/></svg>`
@@ -1764,6 +1813,10 @@ $('soundBtn').onclick=()=>{ save.sound=!save.sound; persist(); renderMenu(); };
 $('musicBtn').onclick=()=>Music.toggle();
 $('langBtn').onclick=()=>{ LANG=LANG==='ru'?'en':'ru'; save.lang=LANG; persist(); applyLang(); renderMenu(); };
 $('musicBtn2').onclick=()=>Music.toggle();
+function syncHintsBtn(){ const b=$('hintsBtn'); if(b){ b.classList.toggle('off', save.hints===false); b.title=T(save.hints===false?'hintsOff':'hintsOn'); } }
+$('hintsBtn').onclick=()=>{ save.hints = save.hints===false; persist(); SFX.place(); syncHintsBtn();
+  document.querySelectorAll('.toast').forEach(t=>t.classList.remove('on')); if(save.hints!==false) toast(T('hintsOn')); };
+syncHintsBtn();
 function updatePlayBtn(){
   const pb=$('playBtn'), locked=chosenLvl>unlockedMax();
   const html = locked ? T('locked') : `${T('play')}<span class="cost">${ICONS.bolt}${battleCost()}</span>`;
@@ -1876,6 +1929,21 @@ const avPage=d=>{ const g=$('avGrid'); g.scrollBy({top:d*Math.max(60,g.clientHei
 $('avUp').onclick=()=>avPage(-1); $('avDown').onclick=()=>avPage(1);
 $('avGrid').addEventListener('scroll',avNav,{passive:true});
 window.addEventListener('resize',()=>{ if($('avModal').classList.contains('on')) avNav(); });
+/* Высота экрана в px (iOS Safari и iframe Пикабу): 100vh там больше видимой области.
+   После поворота и после экранной клавиатуры iOS оставляет страницу прокрученной —
+   из-за этого касания «съезжали» относительно кнопок. Возвращаем прокрутку в ноль. */
+function fixViewport(){
+  const h=(window.visualViewport && window.visualViewport.height) || window.innerHeight;
+  document.documentElement.style.setProperty('--vh', Math.round(h)+'px');
+  if(window.scrollX||window.scrollY) window.scrollTo(0,0);
+  document.documentElement.scrollTop=0; document.body.scrollTop=0;
+}
+fixViewport();
+window.addEventListener('resize',fixViewport);
+window.addEventListener('orientationchange',()=>{ fixViewport(); setTimeout(fixViewport,250); setTimeout(fixViewport,700); });
+if(window.visualViewport) window.visualViewport.addEventListener('resize',fixViewport);
+document.addEventListener('focusout',()=>setTimeout(fixViewport,60));
+window.addEventListener('scroll',()=>{ if(window.scrollY) window.scrollTo(0,0); },{passive:true});
 $('avBtn').onclick=openAvatar;
 $('avDone').onclick=avSave;
 $('avX').onclick=()=>$('avModal').classList.remove('on');
@@ -1970,7 +2038,7 @@ const adRewardedOk = async () => { try{ return !!(PKB.sdk && PKB.sdk.ads && PKB.
 async function refreshAdBtn(){
   const b=$('adEnergy'); const ok=await adRewardedOk();
   b.style.display= ok ? '' : 'none'; b.disabled=false;
-  b.innerHTML=`<span class="cost" style="margin:0 .3em 0 0">▶</span>${T('adEnergy',AD_ENERGY)}`;
+  b.innerHTML=`<span class="adic">${ICONS.play}</span>${T('adEnergy',AD_ENERGY)}`;
 }
 let adBusy=false;
 async function watchAdForEnergy(){
@@ -1994,7 +2062,7 @@ $('adEnergy').onclick=watchAdForEnergy;
 async function offerDoubleXp(win){
   const b=$('adXp'); b.style.display='none'; b.disabled=false;
   if(!win || !G || G.xpDoubled || !(await adRewardedOk())) return;
-  b.innerHTML=`<span class="cost" style="margin:0 .3em 0 0">▶</span>${T('adXp',G.xpGain)}`; b.style.display='';
+  b.innerHTML=`<span class="adic">${ICONS.play}</span>${T('adXp',G.xpGain)}`; b.style.display='';
 }
 async function watchAdForXp(){
   if(adBusy || !G || G.xpDoubled || !(await adRewardedOk())){ $('adXp').style.display='none'; return; }
@@ -2343,15 +2411,17 @@ function startBattle(){
 function setTurn(t){
   G.turn=t; const el=$('turn');
   el.className='panel turn '+(t==='me'?'me':'foe');
-  el.textContent = t==='me' ? T('turnMe') : T('turnFoe');
+  el.innerHTML = `<span class="tl">${t==='me'?T('turnMe'):T('turnFoe')}</span><span class="ts">${t==='me'?T('turnMeS'):T('turnFoeS')}</span>`;
   G.foeUI.board.classList.toggle('active', t==='me' && !G.over);
   renderArsBar(); renderAutoBtn();
   if(t==='me' && G.auto) autoTick();
 }
 // оставшиеся корабли противника — компактной строкой рядом с подписью «Флот противника»
 function renderFleet(){
-  $('fleet').innerHTML=[4,3,2,1].map(len=>G.foe.ships.filter(s=>s.len===len)
+  const pips=f=>[4,3,2,1].map(len=>f.ships.filter(s=>s.len===len)
     .map(s=>`<i class="pip${s.sunk?' dead':''}" style="--n:${len}"></i>`).join('')).join('<u></u>');
+  $('fleet').innerHTML=pips(G.foe); $('myFleetPips').innerHTML=pips(G.me);
+  $('myFleetPips').title=T('fleetLeft',G.me.alive().length);
   $('fleet').title=T('fleetLeft',G.foe.alive().length);
 }
 let bubbleT;
@@ -2369,8 +2439,8 @@ function renderArsBar(){
   bar.innerHTML=ARS_ATTACK.filter(k=>G.inv[k]>0).map(k=>`<button class="wbtn${aimItem===k?' on':''}" data-k="${k}" title="${escapeHtml(T('arsName')[k]+' — '+T('arsDesc')[k])}" ${can?'':'disabled'}><img src="assets/arsenal/${ARS[k].icon}_icon.png" alt=""><b>${G.inv[k]}</b></button>`).join('');
   bar.querySelectorAll('.wbtn').forEach(b=>b.onclick=()=>{
     const k=b.dataset.k; if(aimItem===k){ cancelAim(); return; }
-    if(G.auto){ G.auto=false; clearTimeout(autoT); renderAutoBtn(); toast(T('autoOff')); }
-    aimItem=k; SFX.place(); clearZone(); G.foeUI.board.classList.add('aiming'); toast(T('aimHint',T('arsName')[k])); renderArsBar();
+    if(G.auto){ G.auto=false; clearTimeout(autoT); renderAutoBtn(); hint(T('autoOff')); }
+    aimItem=k; SFX.place(); clearZone(); G.foeUI.board.classList.add('aiming'); hint(T('aimHint',T('arsName')[k])); renderArsBar();
   });
 }
 function cancelAim(){ aimItem=null; clearZone(); if(G) G.foeUI.board.classList.remove('aiming'); renderArsBar(); }
@@ -2416,16 +2486,16 @@ async function renderCell(e,o={}){
       if(e.r==='sunk'){
         if(o.gap===undefined) await sleep(250);
         SFX.sunk();
-        if(!mine){ const el=shipEl(e.ship.len,e.ship.v,'sunk'); el.classList.add('sunkfoe'); posShip(el,e.ship); ui.grid.appendChild(el); renderFleet(); }
+        if(!mine){ const el=shipEl(e.ship.len,e.ship.v,'sunk'); el.classList.add('sunkfoe'); posShip(el,e.ship); ui.grid.appendChild(el); renderFleet(); } else renderFleet();
         e.around.forEach(([ax,ay])=>addMark(ui,ax,ay,'dot'));
-        toast(mine?T('mySunk',L().ships[e.ship.len]):T('foeSunk',L().ships[e.ship.len]));
+        hint(mine?T('mySunk',L().ships[e.ship.len]):T('foeSunk',L().ships[e.ship.len]));
       }
       break; }
     case 'mine': case 'mineT': case 'mineSelf': {
       const mc=ui.cell(x,y).querySelector('.minecell'); if(mc) mc.remove();
       addMark(ui,x,y,'minex'); playFx(ui,x,y,EXPL,8,1.8); SFX.boom();
-      if(e.r==='mine') toast(mine?T('mineMyHit'):T('mineFoeHit'));
-      else if(e.r==='mineT') toast(T('mineTorpedo'));
+      if(e.r==='mine') hint(mine?T('mineMyHit'):T('mineFoeHit'));
+      else if(e.r==='mineT') hint(T('mineTorpedo'));
       break; }
   }
 }
@@ -2470,7 +2540,7 @@ function flyPlanes(r,side,ui){
     } else waitMs=Math.max(waitMs, delay + tHit*D);
   });
   SFX.plane(D/1000);
-  if(r.planes.some(p=>p.shot)) setTimeout(()=>toast(side==='me'?T('pvoFoe'):T('pvoMine')), tShot*D+200);
+  if(r.planes.some(p=>p.shot)) setTimeout(()=>hint(side==='me'?T('pvoFoe'):T('pvoMine')), tShot*D+200);
   return sleep(waitMs);
 }
 // след торпеды по строке/столбцу
@@ -2498,8 +2568,8 @@ async function animateWeapon(r,side){
     SFX.radar(); const o=overlay(ui,'assets/fx/radar.png',r.x0,r.y0,3,3,1.15);
     await o.animate([{opacity:0,transform:'rotate(0deg) scale(.6)'},{opacity:1,transform:'rotate(120deg) scale(1)',offset:.3},{opacity:1,transform:'rotate(300deg)'},{opacity:0,transform:'rotate(360deg)'}],{duration:1500}).finished;
     o.remove();
-    if(side==='me'){ r.spotted.forEach(([x,y])=>{ const s=document.createElement('div'); s.className='spot'; ui.cell(x,y).appendChild(s); }); toast(T('radarFound',r.spotted.length)); }
-    else toast(T('radarFoe'));
+    if(side==='me'){ r.spotted.forEach(([x,y])=>{ const s=document.createElement('div'); s.className='spot'; ui.cell(x,y).appendChild(s); }); hint(T('radarFound',r.spotted.length)); }
+    else hint(T('radarFoe'));
     return;
   }
   if(r.item==='sub'){
@@ -2518,7 +2588,7 @@ async function animateWeapon(r,side){
   if(r.item==='atomic'){
     SFX.atomic();
     if(r.border){
-      toast(T('atomicBorder'));
+      hint(T('atomicBorder'));
       const h=r.border.r1-r.border.r0+1;
       const o1=overlay(G.foeUI,'assets/fx/atomic.png',0,r.border.r0,2.4,h,1); o1.style.backgroundSize='240% 100%'; o1.style.backgroundPosition='100% 0';
       const o2=overlay(G.meUI,'assets/fx/atomic.png',N-2.4,r.border.r0,2.4,h,1); o2.style.backgroundSize='240% 100%'; o2.style.backgroundPosition='0 0';
@@ -2619,12 +2689,12 @@ function autoTick(){
 }
 $('autoBattle').onclick=()=>{
   if(!G || G.over || G.ff) return;
-  if(G.auto){ G.auto=false; clearTimeout(autoT); toast(T('autoOff')); SFX.place(); renderAutoBtn(); return; }
+  if(G.auto){ G.auto=false; clearTimeout(autoT); hint(T('autoOff')); SFX.place(); renderAutoBtn(); return; }
   const L=playerLevel();
   if(!autoAllowed()){ SFX.bad(); toast(T('autoLimit',autoCap(L),AUTO_WINDOW)); return; }
   if(aimItem) cancelAim();
   if(G.autoK===undefined) G.autoK=autoInstinct(G.adv,G.lvl,autoTarget(L));
-  G.auto=true; G.autoUsed=true; toast(T('autoOn',Math.round(autoTarget(L)))); SFX.place(); renderAutoBtn();
+  G.auto=true; G.autoUsed=true; hint(T('autoOn',Math.round(autoTarget(L)))); SFX.place(); renderAutoBtn();
   if(G.turn==='me' && !G.busy) autoTick();
 };
 

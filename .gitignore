@@ -1,6 +1,6 @@
 # исходники генерации — в игре не используются
-art/
-logo/
+/art/
+/logo/
 *.psd
 Thumbs.db
 desktop.ini
