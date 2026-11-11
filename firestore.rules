@@ -1,0 +1,73 @@
+rules_version = '2';
+
+// Правила безопасности для онлайн-рейтинга «Морской бой: Лоция».
+// Вставить в Firebase Console → Firestore Database → Rules → Publish.
+//
+// Что защищается:
+//  - имя игрока уникально и закрепляется навсегда (names/{ключ_имени});
+//  - игрок может менять только свою запись (players/{uid});
+//  - очки и победы могут только расти и не быстрее, чем за реальные бои:
+//    не больше 150 очков, 180 опыта и 1 победы за бой (+180 опыта за каждое удвоение роликом; удвоений не больше, чем побед), не чаще одного боя в 20 секунд;
+//  - энергия — целое число от 0 до 30000 (запас до 590 плюс купленные пакеты по 1000–5000 сверх запаса);
+//  - аватар — короткий код готового аватара (до 64 символов);
+//  - топливо растёт не больше чем на 80 за бой плюс столько, сколько монет потрачено на обмен.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isCount(v) { return v is int && v >= 0; }
+
+    function validProgress(o, n) {
+      let db = n.battles - o.battles;
+      return isCount(n.points) && isCount(n.wins) && isCount(n.losses)
+        && isCount(n.battles) && isCount(n.flawless) && isCount(n.coins)
+        && isCount(n.beaten) && isCount(n.streak)
+        && isCount(n.xp) && n.xp >= o.xp && n.xp - o.xp <= 180 * db + 180 * (n.get('xpAds', 0) - o.get('xpAds', 0))
+        && isCount(n.get('xpAds', 0)) && n.get('xpAds', 0) >= o.get('xpAds', 0) && n.get('xpAds', 0) <= n.wins
+        && isCount(n.fuel) && n.fuel <= 1000000
+        && n.fuel - o.get('fuel', 200) <= 80 * db + (o.coins > n.coins ? o.coins - n.coins : 0)
+        && isCount(n.beatenAdv) && n.beatenAdv <= 8
+        && n.beatenAdv >= o.get('beatenAdv', 0)
+        && (n.beatenAdv - o.get('beatenAdv', 0)) + (n.beaten - o.beaten) <= n.wins - o.wins
+        && isCount(n.energy) && n.energy <= 30000 && n.energyTs is int
+        && n.get('av', '') is string && n.get('av', '').size() <= 64
+        && db >= 0 && db <= 20
+        && n.wins >= o.wins && n.losses >= o.losses
+        && (n.wins - o.wins) + (n.losses - o.losses) == db
+        && n.flawless >= o.flawless && n.flawless - o.flawless <= n.wins - o.wins
+        && n.points >= o.points && n.points - o.points <= 150 * db
+        && n.beaten >= o.beaten && n.beaten <= 8
+        && n.coins - o.coins <= 300
+        && n.streak <= 7
+        && request.time > o.updatedAt + duration.value(20 * db, 's');
+    }
+
+    match /names/{key} {
+      allow read: if true;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid
+        && key.size() >= 3 && key.size() <= 16;
+      allow update, delete: if false;
+    }
+
+    match /players/{uid} {
+      allow read: if true;
+      allow create: if request.auth != null && request.auth.uid == uid
+        && getAfter(/databases/$(database)/documents/names/$(request.resource.data.nameKey)).data.uid == uid
+        && request.resource.data.points == 0 && request.resource.data.wins == 0
+        && request.resource.data.losses == 0 && request.resource.data.battles == 0
+        && request.resource.data.flawless == 0 && request.resource.data.beaten == 0
+        && request.resource.data.coins == 0 && request.resource.data.streak == 0
+        && request.resource.data.xp == 0 && request.resource.data.energy == 100
+        && request.resource.data.fuel == 200 && request.resource.data.beatenAdv == 0
+        && request.resource.data.get('xpAds', 0) == 0
+        && request.resource.data.get('av', '') is string && request.resource.data.get('av', '').size() <= 64;
+      allow update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.name == resource.data.name
+        && request.resource.data.nameKey == resource.data.nameKey
+        && validProgress(resource.data, request.resource.data);
+      allow delete: if false;
+    }
+  }
+}
