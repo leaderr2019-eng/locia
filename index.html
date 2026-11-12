@@ -574,11 +574,33 @@ body:has(.autoskip.on) .toast{bottom:calc(max(10px,env(safe-area-inset-bottom)) 
   .bubble{right:calc(100% + 6px);max-width:calc(100vw - 120px)}
   .bubble span{font-size:13px;max-width:none}
   .bubble img{width:40px;height:44px}
-  #leaders .card{height:min(94%,860px);padding:16% 5% 6%}
+  #leaders .card{height:min(94%,860px);padding-left:5%;padding-right:5%}
   #leaders .xbtn.left{top:3.5%;left:6%;width:40px;height:40px}
-  #leaders h2{margin-top:-6%}
 }
 @media (max-width:380px) and (max-aspect-ratio:1/1){ #battle{--btn:31px;--avs:44px} }
+/* заголовок «Рейтинг» ровно по центру ленты фона (центр ленты — 4,2% высоты панели) */
+#leaders .card{padding-top:0!important}
+#leaders h2{flex:none;height:8.4%;margin:0 0 1.5%;display:flex;align-items:center;justify-content:center;line-height:1}
+/* верхняя плашка игрока на телефоне: энергия, «+» и топливо не наезжают друг на друга */
+@media (max-aspect-ratio:1/1){
+  .pchip{max-width:none!important}
+  .enbox{flex:none!important}
+  .enrow{flex-wrap:nowrap;white-space:nowrap;font-size:14px;gap:3px}
+  .enrow svg{width:15px;height:15px}
+  .enplus{width:26px;height:26px;margin-left:5px}
+  .enplus svg{width:14px;height:14px}
+  .enplus b{width:14px;height:14px;font-size:11px;line-height:12px;right:-4px;bottom:-4px}
+  .fuelchip img{width:24px;height:24px}
+  .fuelchip i{display:none}
+  #menu .corner .iconbtn.pic{width:40px!important;height:40px!important}
+}
+@media (max-aspect-ratio:1/1) and (max-width:375px){
+  .enbar,.entimer{max-width:96px}
+  #menu .corner .iconbtn.pic{width:36px!important;height:36px!important}
+  .pchip{gap:6px!important;padding-right:6px!important}
+}
+/* меню и другие экраны не «тянутся» пальцем: без горизонтальной прокрутки и пружины */
+.screen,.wrap{overflow-x:hidden;overscroll-behavior:none}
 </style>
 </head>
 <body>
@@ -1944,6 +1966,26 @@ window.addEventListener('orientationchange',()=>{ fixViewport(); setTimeout(fixV
 if(window.visualViewport) window.visualViewport.addEventListener('resize',fixViewport);
 document.addEventListener('focusout',()=>setTimeout(fixViewport,60));
 window.addEventListener('scroll',()=>{ if(window.scrollY) window.scrollTo(0,0); },{passive:true});
+/* iOS «пружинит» весь экран при протягивании пальцем. Разрешаем движение только внутри
+   блока, который действительно прокручивается (список рейтинга, магазин и т.п.) и только пока ему есть куда ехать. */
+(function(){
+  let sy=0, sx=0;
+  const scroller=el=>{ for(; el && el!==document.body; el=el.parentElement){
+      const cs=getComputedStyle(el);
+      if(/(auto|scroll)/.test(cs.overflowY) && el.scrollHeight>el.clientHeight+1) return el;
+      if(/(auto|scroll)/.test(cs.overflowX) && el.scrollWidth>el.clientWidth+1) return el; }
+    return null; };
+  document.addEventListener('touchstart',e=>{ if(e.touches.length===1){ sy=e.touches[0].clientY; sx=e.touches[0].clientX; } },{passive:true});
+  document.addEventListener('touchmove',e=>{
+    if(e.touches.length!==1) return;
+    const t=e.touches[0], dy=t.clientY-sy, dx=t.clientX-sx, el=scroller(e.target);
+    if(!el){ e.preventDefault(); return; }
+    if(Math.abs(dy)>=Math.abs(dx)){
+      const top=el.scrollTop<=0, bottom=el.scrollTop+el.clientHeight>=el.scrollHeight-1;
+      if((top && dy>0) || (bottom && dy<0)) e.preventDefault();
+    }
+  },{passive:false});
+})();
 $('avBtn').onclick=openAvatar;
 $('avDone').onclick=avSave;
 $('avX').onclick=()=>$('avModal').classList.remove('on');
