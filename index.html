@@ -601,6 +601,29 @@ body:has(.autoskip.on) .toast{bottom:calc(max(10px,env(safe-area-inset-bottom)) 
 }
 /* меню и другие экраны не «тянутся» пальцем: без горизонтальной прокрутки и пружины */
 .screen,.wrap{overflow-x:hidden;overscroll-behavior:none}
+/* предложение энергии */
+.emhero,.emsub,.emacts{display:none}
+#enModal.offer .emhero{display:grid;place-items:center;width:74px;height:74px;margin:-6px auto 2px;border-radius:50%;
+  background:radial-gradient(circle at 38% 32%,#fff6cf,#e9b84c 58%,#a8761f);border:3px solid #6b4a18;box-shadow:0 4px 0 #5a3c12,0 8px 18px rgba(0,0,0,.35);animation:enHero 1.6s ease-in-out infinite}
+#enModal.offer .emhero svg{width:42px;height:42px}
+#enModal.ready .emhero{animation:none;background:radial-gradient(circle at 38% 32%,#eaffd8,#7fbf5a 58%,#3e7a2c)}
+@keyframes enHero{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+#enModal.offer .emsub{display:block;text-align:center;font-size:16px;margin:0 0 4px;color:var(--ink)}
+#enModal.offer .card{animation:enPop .35s cubic-bezier(.2,1.4,.4,1)}
+@keyframes enPop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+#enModal.offer .emacts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.pack{position:relative}
+.pack small{font-size:12px;color:var(--ink2);margin-top:-4px}
+.pack.best{border-color:#c4892a;background:linear-gradient(#fff3d1,#f3dfae);box-shadow:0 0 0 2px rgba(232,182,74,.55)}
+.ptag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-style:normal;font-size:11px;font-weight:bold;white-space:nowrap;
+  padding:2px 9px;border-radius:10px;background:#3d6e78;color:#fff;border:1.5px solid #fff4d6}
+.ptag.best{background:#b3261e}
+#enModal .card{width:min(620px,94vw)!important;max-height:calc(var(--vh,100vh) - 16px);overflow-y:auto;scrollbar-width:none}
+#enModal.offer .card{gap:8px;padding:4.5% 6% 4%}
+#enModal .packs{flex-wrap:nowrap;width:100%;gap:10px;margin-top:8px}
+#enModal .pack{min-width:0;flex:1 1 0}
+#enModal .pack .btn{white-space:nowrap;padding-left:10px;padding-right:10px}
+@media (max-aspect-ratio:1/1){ #enModal .packs{gap:16px 8px} #enModal .pack{min-width:0;flex:1 1 30%;padding:12px 6px 8px} #enModal .pack .bolt{font-size:18px} }
 </style>
 </head>
 <body>
@@ -820,12 +843,15 @@ body:has(.autoskip.on) .toast{bottom:calc(max(10px,env(safe-area-inset-bottom)) 
 <!-- ======= ENERGY SHOP (Пикабу Игры) ======= -->
 <div class="modal" id="enModal"><div class="card">
   <button class="iconbtn pic xbtn" id="enX" data-i18n-title="close" data-icon="close"></button>
-  <h2 data-i18n="enShop"></h2>
+  <div class="emhero" id="emHero"><span data-icon="bolt"></span></div>
+  <h2 id="emTitle"></h2>
+  <p class="emsub" id="emSub"></p>
   <div class="have"><span><span data-icon="bolt"></span><b id="emNow">0</b></span></div>
   <p id="emNext"></p>
   <button class="btn" id="adEnergy" style="display:none"></button>
   <div class="packs" id="enPacks"></div>
   <p class="emnote" id="emNote"></p>
+  <div class="emacts" id="emActs"><button class="btn" id="emGo"></button><button class="btn small" id="emWait"></button></div>
 </div></div>
 
 <!-- ======= FUEL ======= -->
@@ -924,7 +950,7 @@ const I18N = {
   plStart:'нажмите, чтобы начать', plSkip:'нажмите, чтобы пропустить', plSound:'нажмите, чтобы включить звук', plReplay:'Смотреть пролог',
   adEnergy:n=>`Посмотреть ролик: +${n} энергии`, adXp:n=>`Удвоить опыт за ролик: ещё +${n}`, xpDoubled:n=>`Опыт удвоен: ещё +${n}!`, adNoRewardXp:'Ролик не досмотрен — опыт не удвоен', adNoReward:'Ролик не досмотрен — энергия не начислена',
   fleetLeft:n=>`Осталось кораблей противника: ${n}`, avUp:'Выше', avDown:'Ниже',
-  stkTitle:'Стикеры', enShop:'Энергия', enBought:n=>`+${n} энергии!`, enBuyFail:'Покупка не прошла. Попробуйте ещё раз',
+  stkTitle:'Стикеры', enShop:'Энергия', enOutT:'Энергия закончилась!', enOutS:c=>`Бой стоит ${c} энергии. Пополните запас и продолжайте сражение!`, enWait:'Подожду', enReadyT:'Энергия пополнена!', enGo:'В бой!', enReady:'Энергии хватает — можно в бой!', enBest:'Выгодно', enHit:'Хит', enBattles:n=>`≈ ${n} боёв`, enBought:n=>`+${n} энергии!`, enBuyFail:'Покупка не прошла. Попробуйте ещё раз',
   enNextLong:t=>`+1 энергии через ${t} · 20 в час`, enPayNote:'Оплата через Пикабу Игры. Энергия сверх запаса не сгорает.', enRegen:'Энергия восстанавливается сама: 20 в час.',
 
   byLevel:'По уровню', colLevel:'Уровень', xpShort:'оп.', ptsShort:'оч.',
@@ -1015,7 +1041,7 @@ const I18N = {
   plStart:'tap to begin', plSkip:'tap to skip', plSound:'tap to turn the sound on', plReplay:'Watch the prologue',
   adEnergy:n=>`Watch a video: +${n} energy`, adXp:n=>`Double XP with a video: +${n} more`, xpDoubled:n=>`XP doubled: +${n} more!`, adNoRewardXp:'The video was not watched to the end — XP not doubled', adNoReward:'The video was not watched to the end — no energy this time',
   fleetLeft:n=>`Enemy ships left: ${n}`, avUp:'Up', avDown:'Down',
-  stkTitle:'Stickers', enShop:'Energy', enBought:n=>`+${n} energy!`, enBuyFail:'The purchase did not go through. Please try again',
+  stkTitle:'Stickers', enShop:'Energy', enOutT:'Out of energy!', enOutS:c=>`A battle costs ${c} energy. Top up and keep fighting!`, enWait:'I will wait', enReadyT:'Energy restored!', enGo:'To battle!', enReady:'You have enough energy — let us fight!', enBest:'Best value', enHit:'Popular', enBattles:n=>`≈ ${n} battles`, enBought:n=>`+${n} energy!`, enBuyFail:'The purchase did not go through. Please try again',
   enNextLong:t=>`+1 energy in ${t} · 20 per hour`, enPayNote:'Paid via Pikabu Games. Energy above the cap does not expire.', enRegen:'Energy refills on its own: 20 per hour.',
 
   byLevel:'By level', colLevel:'Level', xpShort:'XP', ptsShort:'pts',
@@ -1846,11 +1872,11 @@ function updatePlayBtn(){
   pb.disabled=locked;
   pb.classList.toggle('noen', !locked && energyNow()<battleCost());
 }
-function energyOk(){
+function energyOk(then){
   if(energyNow()>=battleCost()) return true;
-  SFX.bad(); toast(T('noEnergy',battleCost(),mmss(nextEnergyMs()))); if(PKB.sdk) openEnergy(); return false;
+  openEnergy(then||(()=>{})); return false;                         // плашка по центру с предложением пополнить
 }
-$('playBtn').onclick=()=>{ ac(); if(chosenLvl<=unlockedMax() && energyOk()) startSetup(); };
+$('playBtn').onclick=()=>{ ac(); if(chosenLvl<=unlockedMax() && energyOk(()=>startSetup())) startSetup(); };
 $('leadersBtn').onclick=()=>openLeaders('points');
 $('dailyBtn').onclick=()=>openDaily(true);
 
@@ -2071,7 +2097,7 @@ async function buyEnergy(id){
   const r=await PKB.sdk.store.purchase({productId:id, developerPayload:JSON.stringify({name:save.name||''})});
   if(!r.success){ if(r.reason!=='USER_CANCELLED') toast(T('enBuyFail')); return; }
   await grantPurchase(r.purchase);
-  openEnergy();
+  openEnergy(!!enOffer);
 }
 /* реклама за вознаграждение: +10 энергии. Награда — только если ролик досмотрен (reward:true).
    На время ролика музыка и звуки выключаются; кнопка скрыта, если показать рекламу нельзя. */
@@ -2096,7 +2122,7 @@ async function watchAdForEnergy(){
     energyNow(); save.energy+=AD_ENERGY; if(save.energy>=maxEnergy()) save.energyTs=Date.now();
     save.dirty=true; persist(); syncProfile(); renderHud(); updatePlayBtn(); SFX.win(); toast(T('enBought',AD_ENERGY));
   } else if(res && res.rendered) toast(T('adNoReward'));
-  openEnergy();
+  openEnergy(!!enOffer);
 }
 $('adEnergy').onclick=watchAdForEnergy;
 
@@ -2128,22 +2154,46 @@ async function watchAdForXp(){
   } else { $('adXp').disabled=false; if(res && res.rendered) toast(T('adNoRewardXp')); else offerDoubleXp(true); }
 }
 $('adXp').onclick=watchAdForXp;
-function openEnergy(){
-  const en=energyNow(), ms=nextEnergyMs();
+/* Окно энергии. Обычный режим — магазин (по кнопке «+»). Режим «offer» — всплывает по центру,
+   когда энергии не хватает на бой: предложение пакетов и ролика, кнопки «Подожду» и (когда хватит) «В бой!». */
+let enOffer=null, enTick=0;
+function enModalRefresh(){
+  const en=energyNow(), ms=nextEnergyMs(), m=$('enModal');
   $('emNow').textContent=`${en}/${maxEnergy()}`;
   $('emNext').textContent= ms ? T('enNextLong',mmss(ms)) : T('enFull');
+  if(enOffer){
+    const ready=en>=battleCost();
+    m.classList.toggle('ready',ready); $('emTitle').textContent=T(ready?'enReadyT':'enOutT');
+    $('emSub').textContent= ready ? T('enReady') : T('enOutS',battleCost());
+    $('emGo').style.display= ready ? '' : 'none';
+  }
+}
+function openEnergy(offer){
+  enOffer = (typeof offer==='function') ? offer : (offer===true ? (enOffer||(()=>{})) : null);
+  const m=$('enModal'); m.classList.toggle('offer',!!enOffer); m.classList.remove('ready');
+  $('emTitle').textContent = enOffer ? T('enOutT') : T('enShop');
+  $('emGo').textContent=T('enGo'); $('emWait').textContent=T('enWait');
   if(PKB.sdk && PKB.products.length){
-    $('enPacks').innerHTML=PKB.products.map(p=>`<div class="pack"><div class="bolt">${ICONS.bolt}+${ENERGY_PRODUCTS[p.id]}</div>
-      <button class="btn small" data-id="${escapeHtml(p.id)}">${escapeHtml(p.formattedPrice)}</button></div>`).join('');
+    const prods=[...PKB.products].sort((a,b)=>(ENERGY_PRODUCTS[a.id]||0)-(ENERGY_PRODUCTS[b.id]||0));
+    const top=prods.length-1;
+    $('enPacks').innerHTML=prods.map((p,i)=>{ const n=ENERGY_PRODUCTS[p.id]||0;
+      const tag = i===top && prods.length>1 ? `<em class="ptag best">${T('enBest')}</em>` : (i===top-1 && prods.length>2 ? `<em class="ptag">${T('enHit')}</em>` : '');
+      return `<div class="pack${i===top?' best':''}">${tag}<div class="bolt">${ICONS.bolt}+${n}</div><small>${T('enBattles',Math.floor(n/battleCost()))}</small>
+      <button class="btn small" data-id="${escapeHtml(p.id)}">${escapeHtml(p.formattedPrice)}</button></div>`; }).join('');
     $('enPacks').querySelectorAll('button').forEach(b=>b.onclick=()=>buyEnergy(b.dataset.id));
     $('emNote').textContent=T('enPayNote');
   } else { $('enPacks').innerHTML=''; $('emNote').textContent=T('enRegen'); }
-  refreshAdBtn();
-  $('enModal').classList.add('on');
+  refreshAdBtn(); enModalRefresh();
+  clearInterval(enTick); enTick=setInterval(()=>{ if(!m.classList.contains('on')){ clearInterval(enTick); return; } enModalRefresh(); },1000);
+  if(!m.classList.contains('on') && enOffer) SFX.bad();
+  m.classList.add('on');
 }
+function closeEnergy(){ $('enModal').classList.remove('on','offer','ready'); clearInterval(enTick); enOffer=null; }
+$('emWait').onclick=closeEnergy;
+$('emGo').onclick=()=>{ const go=enOffer; closeEnergy(); if(go && energyNow()>=battleCost()) go(); };
 $('enPlus').onclick=e=>{e.stopPropagation();openEnergy();};
 document.querySelector('#pchip .enbox').onclick=openEnergy;
-$('enX').onclick=()=>$('enModal').classList.remove('on');
+$('enX').onclick=closeEnergy;
 
 /* ---------- рейтинг ---------- */
 let leadersTab='points';
@@ -2856,8 +2906,8 @@ async function endBattle(win){
 }
 $('surrender').onclick=()=>{ if(G && !G.over && !G.ff && confirmSurrender()) { G.me.ships.forEach(s=>{s.sunk=true;}); endBattle(false); } };
 function confirmSurrender(){ const b=$('surrender'); if(b.dataset.armed){ delete b.dataset.armed; return true; } b.dataset.armed=1; toast(T('confirmSurrender')); setTimeout(()=>delete b.dataset.armed,2500); return false; }
-$('againBtn').onclick=()=>{ if(chosenLvl>unlockedMax()) chosenLvl=unlockedMax(); if(energyOk()) startSetupKeep(); };
-$('toMenuBtn').onclick=()=>{ renderMenu(); show('menu'); };
+$('againBtn').onclick=()=>{ if(chosenLvl>unlockedMax()) chosenLvl=unlockedMax(); if(energyOk(()=>startSetupKeep())) startSetupKeep(); };
+$('toMenuBtn').onclick=()=>{ renderMenu(); show('menu'); if(energyNow()<battleCost()) setTimeout(()=>{ if($('menu').classList.contains('on')) openEnergy(()=>startSetup()); },450); };
 function startSetupKeep(){ // повтор с той же расстановкой
   const prev=myField; startSetup();
   if(prev && prev.ships.length===FLEET.length){ myField.ships=prev.ships.map(s=>({...s,cells:s.cells.slice(),hits:new Set(),sunk:false})); redrawSetupShips(); renderDock(); updateFight(); }
